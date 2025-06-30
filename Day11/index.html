@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Circle Click Page</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      font-family: sans-serif;
+      background: #f0f0f0;
+    }
+
+    .circle {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: #3498db;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .controls {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 10px;
+      z-index: 1000;
+    }
+
+    .controls button {
+      padding: 8px 14px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+      background-color: #2ecc71;
+      color: white;
+      cursor: pointer;
+    }
+
+    .controls button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <button id="undoBtn">Undo</button>
+    <button id="redoBtn">Redo</button>
+    <button id="resetBtn">Reset</button>
+  </div>
+
+  <script>
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    const body = document.body;
+    let circles = [];
+    let redoStack = [];
+
+    body.addEventListener('click', (e) => {
+      // Prevent button clicks from triggering circles
+      if (e.target.tagName === 'BUTTON') return;
+
+      const circle = document.createElement('div');
+      circle.className = 'circle';
+      circle.style.left = `${e.clientX}px`;
+      circle.style.top = `${e.clientY}px`;
+
+      body.appendChild(circle);
+      circles.push(circle);
+      redoStack = []; // Clear redo stack on new action
+
+      updateButtons();
+    });
+
+    undoBtn.addEventListener('click', () => {
+      if (circles.length > 0) {
+        const circle = circles.pop();
+        circle.remove();
+        redoStack.push(circle);
+        updateButtons();
+      }
+    });
+
+    redoBtn.addEventListener('click', () => {
+      if (redoStack.length > 0) {
+        const circle = redoStack.pop();
+        body.appendChild(circle);
+        circles.push(circle);
+        updateButtons();
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      circles.forEach(c => c.remove());
+      circles = [];
+      redoStack = [];
+      updateButtons();
+    });
+
+    function updateButtons() {
+      undoBtn.disabled = circles.length === 0;
+      redoBtn.disabled = redoStack.length === 0;
+      resetBtn.disabled = circles.length === 0 && redoStack.length === 0;
+    }
+
+    updateButtons(); // Initialize state
+  </script>
+
+</body>
+</html>
