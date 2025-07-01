@@ -6,19 +6,19 @@ let allProducts = [];
 let displayedCount = 0;
 const PRODUCTS_PER_LOAD = 8;
 
-// Fetch products from API
+// Fetch API
 async function fetchProducts() {
   try {
     const res = await fetch('https://fakestoreapi.com/products');
     allProducts = await res.json();
     renderProducts();
   } catch (err) {
-    container.innerHTML = "<p>Failed to load products. Try again later.</p>";
+    container.innerHTML = "<p>Failed</p>";
     console.error("Error fetching products:", err);
   }
 }
 
-
+// PRODUCTS RENDER (JAISA HAI WAISE RAHNE DO)
 function renderProducts(filteredList = null) {
   const list = filteredList || allProducts;
   const visibleItems = list.slice(0, displayedCount + PRODUCTS_PER_LOAD);
@@ -54,7 +54,7 @@ searchInput.addEventListener("input", () => {
   renderProducts(filtered);
 });
 
-
+// LOAD MORE VALA KAAM
 loadMoreBtn.addEventListener("click", () => {
   renderProducts(searchInput.value ? allProducts.filter(p =>
     p.title.toLowerCase().includes(searchInput.value.toLowerCase())
